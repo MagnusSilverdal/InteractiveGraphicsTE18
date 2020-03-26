@@ -21,13 +21,17 @@ public class Graphics extends Canvas implements Runnable {
 
     private Thread thread;
     private boolean running = false;
-    int fps = 60;
-    int ups = 10;
+    private int fps = 60;
+    private int ups = 10;
+
+    private Sprite s;
 
     public Graphics(int w, int h) {
+        this.width = w;
+        this.height = h;
         image = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
         pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
-        Dimension size = new Dimension(w, h);
+        Dimension size = new Dimension(width, height);
         setPreferredSize(size);
         frame = new JFrame();
         frame.setTitle(title);
@@ -36,6 +40,8 @@ public class Graphics extends Canvas implements Runnable {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
+
+        s = new Sprite(32,32);
     }
 
     private void draw() {
@@ -54,6 +60,15 @@ public class Graphics extends Canvas implements Runnable {
     private void update() {
         for (int i = 0 ; i < pixels.length ; i++) {
             pixels[i] = 0;
+        }
+
+        int x = (int)(Math.random()*(width-32));
+        int y = (int)(Math.random()*(height-32));
+
+        for (int i = 0 ; i < s.getHeight() ; i++) {
+            for (int j = 0 ; j < s.getWidth() ; j++) {
+                pixels[(y+i)*width + x+j] = s.getPixels()[i*s.getWidth()+j];
+            }
         }
     }
 
