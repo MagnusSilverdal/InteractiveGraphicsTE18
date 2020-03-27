@@ -18,20 +18,23 @@ public class Graphics extends Canvas implements Runnable {
     private JFrame frame;
     private BufferedImage image;
     private int[] pixels;
+    private int scale;
 
     private Thread thread;
     private boolean running = false;
     private int fps = 60;
-    private int ups = 10;
+    private int ups = 30;
 
     private Sprite s;
+    private double t=0;
 
-    public Graphics(int w, int h) {
+    public Graphics(int w, int h, int scale) {
         this.width = w;
         this.height = h;
+        this.scale = scale;
         image = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
         pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
-        Dimension size = new Dimension(width, height);
+        Dimension size = new Dimension(scale*width, scale*height);
         setPreferredSize(size);
         frame = new JFrame();
         frame.setTitle(title);
@@ -41,7 +44,7 @@ public class Graphics extends Canvas implements Runnable {
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
 
-        s = new Sprite(32,32);
+        s = new Sprite("sprite.png");
     }
 
     private void draw() {
@@ -62,8 +65,14 @@ public class Graphics extends Canvas implements Runnable {
             pixels[i] = 0;
         }
 
-        int x = (int)(Math.random()*(width-32));
-        int y = (int)(Math.random()*(height-32));
+        /* Parametric curve (a circle) see https://en.wikipedia.org/wiki/Parametric_equation
+           t controls the coordinates as (x(t),y(t)). Here t is increased by 2 degrees (pi/180 rad)
+           each timestep.
+        */
+        t += Math.PI/180;
+
+        int x = (int)(width/2+(width/2-s.getWidth())*Math.sin(t));
+        int y = (int)(height/2+(height/2-s.getHeight())*Math.cos(t));
 
         for (int i = 0 ; i < s.getHeight() ; i++) {
             for (int j = 0 ; j < s.getWidth() ; j++) {
