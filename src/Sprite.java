@@ -60,4 +60,10 @@ public class Sprite {
     public int getHeight() {
         return height;
     }
+
+    public void setColor(int color) {
+        for (int i = 0 ; i < pixels.length ; i++) {
+            pixels[i] = color;
+        }
+    }
 }
